@@ -25,3 +25,5 @@ CI/CD와 모니터링을 포함한 Kubernetes(K3s) 기반 실전 MLOps 워크플
 - `develop`: 개발 완료된 기능들이 모이는 브랜치
 - `feature/{description}`: 새로운 기능을 개발하는 브랜치
     - 예: `feature/social-login`
+- `infra/{description}`: 인프라 및 배포 환경 구성을 위한 브랜치
+    - 예: `infra/dockerize`, `infra/k8s-deploy`
