@@ -1,12 +1,17 @@
 """
-    # prophet_env 활성화
-    conda activate /opt/miniconda3/envs/prophet_env
+로컬 학습용 (Docker 이미지에 포함되지 않음 -> 빌드 시간이 너무 오래걸려서 학습용은 따로 뺌)
 
-    # v1 초기 학습
-    python3 training/train.py --version v1
+의존성 설치:
+pip install -r requirements-train.txt
 
-    # v2 재학습 (train + retrain 데이터 합쳐서 학습)
-    python3 training/train.py --version v2
+conda 환경 활성화:
+conda activate mlops
+
+# v1 초기 학습
+python3 training/train.py --version v1
+
+# v2 재학습 (train + retrain 데이터 합쳐서 학습)
+python3 training/train.py --version v2
 """
 import argparse
 import os
