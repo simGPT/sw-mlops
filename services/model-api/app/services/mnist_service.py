@@ -27,7 +27,7 @@ def predict(data: dict) -> dict:
 
     return {
         "result": {
-            "predicted_class": predicted_class, # 예측 숫자
+            "predicted_class": predicted_class, # 예측 숫자 
             "confidence": confidence,   # 확률
             "probabilities": probabilities.tolist(),
         },
