@@ -1,0 +1,6 @@
+# Docker 이미지용
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.11.0+cpu
+numpy==1.26.4
+fastapi
+uvicorn[standard]
