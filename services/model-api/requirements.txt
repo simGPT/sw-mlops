@@ -4,3 +4,4 @@ torch==2.11.0+cpu
 numpy==1.26.4
 fastapi
 uvicorn[standard]
+prometheus-fastapi-instrumentator # prometheus 의존성 추가
