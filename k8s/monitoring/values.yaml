@@ -1,0 +1,7 @@
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      - job_name: model-api
+        static_configs:
+          - targets:
+              - model-api.default.svc.cluster.local:8000
