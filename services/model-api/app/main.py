@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.schemas.schema import RequestSchema, ResponseSchema
 from app.services.service_factory import get_service
 
 
 app = FastAPI(title="Model API")
+# Fastapi의 모든 요청과 응답을 자동으로 추적하고 메트릭 수집 + /metrics 앤드포인트를 자동으로 추가 해줌
+# prometheus가 /metrics 앤드포인트로 접근해서 매트릭을 가져갈 수 있음
+Instrumentator().instrument(app).expose(app) 
 
 # API 헬스 체크용
 @app.get("/health")
