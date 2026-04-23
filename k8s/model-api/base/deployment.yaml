@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: model-api
-          image: simgpt/model-api:v1
+          image: simgpt/model-api:v1 # 이렇게 되어있어도 어차피 cd시에 태그가 커밋 sha로 변경되도록 해놓음
           ports:
             - containerPort: 8000
           resources:
