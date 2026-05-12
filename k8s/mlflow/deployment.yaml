@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: mlflow
-          image: ghcr.io/mlflow/mlflow:v2.9.2
+          image: burakince/mlflow:3.7.0 # postgreSQL 연결이 안돼서 latest로 이미지 바꿈
           ports:
             - containerPort: 5000
           env:
@@ -36,4 +36,4 @@ spec:
             - --host=0.0.0.0
             - --port=5000
             - --default-artifact-root=s3://kube-ml-bucket/mlflow-artifacts # 모델 저장
-            # - --backend-store-uri=postgresql://mlflow:mlflow@mlflow-db:5432/mlflow
+            - --backend-store-uri=postgresql://mlflow:1234@mlflow-db:5432/mlflow
