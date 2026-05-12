@@ -18,14 +18,16 @@ spec:
           ports:
             - containerPort: 5000
           env:
-            - name: MLFLOW_S3_ENDPOINT_URL
-              value: https://s3.amazonaws.com
-            - name: AWS_ACCESS_KEY_ID
+            - name: MLFLOW_S3_ENDPOINT_URL # S3 url
+              value: https://s3.ap-northeast-2.amazonaws.com
+            - name: AWS_DEFAULT_REGION # AWS 지역
+              value: ap-northeast-2
+            - name: AWS_ACCESS_KEY_ID # Access Key
               valueFrom:
                 secretKeyRef:
                   name: aws-credentials
                   key: access-key-id
-            - name: AWS_SECRET_ACCESS_KEY
+            - name: AWS_SECRET_ACCESS_KEY # Secret Access Key
               valueFrom:
                 secretKeyRef:
                   name: aws-credentials
