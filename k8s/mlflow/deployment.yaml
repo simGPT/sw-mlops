@@ -39,3 +39,5 @@ spec:
             - --port=5000
             - --default-artifact-root=s3://kube-ml-bucket/mlflow-artifacts # 모델 저장
             - --backend-store-uri=postgresql://mlflow:1234@mlflow-db:5432/mlflow
+            - --allowed-hosts=mlflow,mlflow:5000,mlflow.default.svc.cluster.local,localhost # 실제 운영 환경에서는 실제 도메인을 입력하면 될 듯
+
