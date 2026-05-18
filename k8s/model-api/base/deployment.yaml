@@ -20,6 +20,18 @@ spec:
           env:
             - name: MLFLOW_TRACKING_URI
               value: http://mlflow:5000
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: secret-access-key
+            - name: AWS_DEFAULT_REGION
+              value: ap-northeast-2
           resources:
             requests:
               cpu: "250m"
