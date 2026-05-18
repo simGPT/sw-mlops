@@ -21,7 +21,7 @@ jobs:
       - name: kubectl apply
         run: kubectl apply -k k8s/model-api/overlays/local/
 
-      - name: 이미지 태그 업데이트 # CD 후 deployment에 있는 v1 태그를 따라가는 것이 아니라 자동으로 커밋 SHA로 업데이트 시키도록
+      - name: 이미지 태그 업데이트 # CD 후 자동으로 커밋 SHA로 업데이트 시키도록
         run: kubectl set image deployment/model-api model-api=${{ secrets.DOCKER_USERNAME }}/model-api:${{ github.event.workflow_run.head_sha }}
 
       - name: 배포 확인
