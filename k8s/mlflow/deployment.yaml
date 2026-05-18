@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: mlflow
-          image: burakince/mlflow:3.7.0 # postgreSQL 연결이 안돼서 latest로 이미지 바꿈
+          image: burakince/mlflow:3.7.0 # postgreSQL 연결이 되는 버전 이미지
           ports:
             - containerPort: 5000
           env:
@@ -39,5 +39,5 @@ spec:
             - --port=5000
             - --default-artifact-root=s3://kube-ml-bucket/mlflow-artifacts # 모델 저장
             - --backend-store-uri=postgresql://mlflow:1234@mlflow-db:5432/mlflow
-            - --allowed-hosts=mlflow,mlflow:5000,mlflow.default.svc.cluster.local,localhost # 실제 운영 환경에서는 실제 도메인을 입력하면 될 듯
+            - --allowed-hosts=mlflow,mlflow:5000,mlflow.default.svc.cluster.local,localhost,localhost:5000 # 실제 운영 환경에서는 실제 도메인을 입력하면 될 듯
 
