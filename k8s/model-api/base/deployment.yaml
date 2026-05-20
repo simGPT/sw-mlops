@@ -14,12 +14,24 @@ spec:
     spec:
       containers:
         - name: model-api
-          image: simgpt/model-api:v1 # 이렇게 되어있어도 어차피 cd시에 태그가 커밋 sha로 변경되도록 해놓음
+          image: simgpt/model-api:latest # 이렇게 되어있어도 어차피 cd시에 태그가 커밋 sha로 정확한 버전 추적하도록 해놓음
           ports:
             - containerPort: 8000
           env:
             - name: MLFLOW_TRACKING_URI
               value: http://mlflow:5000
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: secret-access-key
+            - name: AWS_DEFAULT_REGION
+              value: ap-northeast-2
           resources:
             requests:
               cpu: "250m"

@@ -1,4 +1,4 @@
-name: CD (Local)
+name: CD (Production)
 
 on:
   push:
@@ -9,14 +9,19 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: kubectl 설정
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_PRODUCTION }}" | base64 -d > $HOME/.kube/config
+
       - name: kubectl apply
-        run: kubectl apply -k k8s/model-api/overlays/local/
+        run: kubectl apply -k k8s/model-api/overlays/production/
 
       - name: 파드 재시작 # (이미지 태그가 계속 latest여도 새 이미지로 배포되도록)
         run: kubectl rollout restart deployment/model-api

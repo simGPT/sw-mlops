@@ -3,7 +3,6 @@ name: CI (model-api)
 on:
   push:
     branches:
-      - main
       - develop
     paths:
       - 'services/model-api/**'
