@@ -8,7 +8,7 @@ from prometheus_client import Counter, Histogram # prometheus 로 모니터링
 
 MODEL_NAME = "mnist"
 MODEL_VERSION = "v1"
-
+ 
 prediction_counter = Counter(
     "mnist_predictions_total",
     "예측 횟수",
