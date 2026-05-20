@@ -1,18 +1,15 @@
 name: CD (Local)
 
 on:
-  workflow_run:
-    workflows:
-      - CI (model-api)
-    types:
-      - completed
+  push:
     branches:
       - main
+    paths:
+      - 'services/model-api/**'
 
 jobs:
   deploy:
     runs-on: self-hosted
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout
@@ -21,8 +18,8 @@ jobs:
       - name: kubectl apply
         run: kubectl apply -k k8s/model-api/overlays/local/
 
-      - name: 이미지 태그 업데이트 # CD 후 자동으로 커밋 SHA로 업데이트 시키도록
-        run: kubectl set image deployment/model-api model-api=${{ secrets.DOCKER_USERNAME }}/model-api:${{ github.event.workflow_run.head_sha }}
+      - name: 파드 재시작 # (이미지 태그가 계속 latest여도 새 이미지로 배포되도록)
+        run: kubectl rollout restart deployment/model-api
 
       - name: 배포 확인
         run: kubectl rollout status deployment/model-api
