@@ -32,6 +32,8 @@ spec:
                   key: secret-access-key
             - name: AWS_DEFAULT_REGION
               value: ap-northeast-2
+            - name: CHURN_MODEL_VERSION # 모델 버전 추가
+              value: "v5"
           resources:
             requests:
               cpu: "250m"

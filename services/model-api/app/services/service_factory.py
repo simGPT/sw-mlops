@@ -1,8 +1,9 @@
-from app.services import mnist_service
+from app.services import mnist_service, churn_service
 
 
 _services = {
     "mnist": mnist_service,
+    "churn": churn_service,
 }
 
 # 모델의 종류에 맞게 service 파일 불러오는 라우터
