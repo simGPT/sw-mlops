@@ -13,6 +13,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 import mlflow
 import mlflow.sklearn
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from training.churn.dataset import load_data, preprocess, FEATURES
 from training.churn.evaluate import evaluate
@@ -20,13 +22,17 @@ from training.churn.evaluate import evaluate
 
 def main(args):
     df = load_data(args.data_dir)
-    (x_train, y_train), (x_valid, y_valid), (x_test, y_test), _ = preprocess(df)
+    (x_train, y_train), (x_valid, y_valid), (x_test, y_test) = preprocess(df)
 
     mlflow.set_tracking_uri(args.mlflow_uri)
     mlflow.set_experiment("churn")
 
+    # mlflow 에서 모델을 불러올때도 기존의 실제 데이터를 정규화 후에 적용 해야해서 파이프라인 추가
     with mlflow.start_run(run_name=args.version):
-        model = LogisticRegression(C=args.C, random_state=42, max_iter=1000)
+        model = Pipeline([
+            ('scaler', StandardScaler()),
+            ('clf', LogisticRegression(C=args.C, random_state=42, max_iter=1000)),
+        ])
         model.fit(x_train, y_train)
 
         val_metrics = evaluate(model, x_valid, y_valid)

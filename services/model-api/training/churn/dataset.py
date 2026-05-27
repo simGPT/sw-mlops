@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
 FEATURES = [
     'account_age_months',
@@ -35,9 +34,4 @@ def preprocess(df, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15):
         x_remaining, y_remaining, test_size=test_ratio / (val_ratio + test_ratio), random_state=42, stratify=y_remaining
     )
 
-    scaler = StandardScaler()
-    x_train_scaled = scaler.fit_transform(x_train)
-    x_val_scaled = scaler.transform(x_val)
-    x_test_scaled = scaler.transform(x_test)
-
-    return (x_train_scaled, y_train), (x_val_scaled, y_val), (x_test_scaled, y_test), scaler
+    return (x_train, y_train), (x_val, y_val), (x_test, y_test)
