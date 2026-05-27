@@ -17,10 +17,10 @@ def health():
 
 # MNIST 데이터 모델 예측 API
 @app.post("/mnist_predict", response_model=ResponseSchema)
-def predict(request: RequestSchema):
+def mnist_predict(request: RequestSchema):
     try:
-        service = get_service(request.type) # 모델에 맞는 service 지정
-        output = service.predict(request.data)  # 예측 결과
+        service = get_service(request.type)
+        output = service.predict(request.data)
 
         return ResponseSchema(
             success=True,
@@ -33,6 +33,30 @@ def predict(request: RequestSchema):
         return ResponseSchema(
             success=False,
             model=request.type,
+            result=None,
+            metadata=None,
+            error=str(e),
+        )
+
+
+# 고객 이탈 예측 API
+@app.post("/churn_predict", response_model=ResponseSchema)
+def churn_predict(request: RequestSchema):
+    try:
+        service = get_service("churn")
+        output = service.predict(request.data)
+
+        return ResponseSchema(
+            success=True,
+            model="churn",
+            result=output["result"],
+            metadata=output["metadata"],
+            error=None,
+        )
+    except Exception as e:
+        return ResponseSchema(
+            success=False,
+            model="churn",
             result=None,
             metadata=None,
             error=str(e),
