@@ -4,10 +4,9 @@ metadata:
   name: mlflow
   namespace: mlflow
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: mlflow
   ports:
     - port: 5000
       targetPort: 5000
-      nodePort: 30050
