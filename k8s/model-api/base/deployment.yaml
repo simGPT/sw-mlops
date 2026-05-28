@@ -19,7 +19,7 @@ spec:
             - containerPort: 8000
           env:
             - name: MLFLOW_TRACKING_URI
-              value: http://mlflow:5000
+              value: http://mlflow.mlflow.svc.cluster.local:5000
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
