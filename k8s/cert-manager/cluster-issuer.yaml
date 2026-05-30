@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer # 인증서 발급, 클러스터 전체에서 사용 가능
+metadata:
+  name: swmlops-issuer
+spec:
+  acme: # acme 프로토콜이 Let’s Encrypt와 통신하기 위한 표준 프로토콜
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: simgpt02@gmail.com
+    privateKeySecretRef:
+      name: swmlops-issuer
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik # k3s 에서 기본 제공해주는 ingress controller
