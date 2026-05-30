@@ -64,7 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('--version', type=str, default='v1')
     parser.add_argument('--C', type=float, default=1.0)
     parser.add_argument('--data_dir', type=str, default='../data/churn')
-    parser.add_argument('--mlflow_uri', type=str, default='http://localhost:5000')
+    parser.add_argument('--mlflow_uri', type=str, default='https://mlflow.swmlops.site') # 로컬에서 실행해도 등록되도록 기본값 변경
     args = parser.parse_args()
 
     main(args)
