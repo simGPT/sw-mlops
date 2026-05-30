@@ -15,7 +15,6 @@ spec:
       containers:
         - name: model-api
           image: simgpt/model-api:latest # 이렇게 되어있어도 어차피 cd시에 태그가 커밋 sha로 정확한 버전 추적하도록 해놓음
-          image: simgpt/model-api:latest # 이렇게 되어있어도 어차피 cd시에 태그가 커밋 sha로 정확한 버전 추적하도록 해놓음
           ports:
             - containerPort: 8000
           env:
