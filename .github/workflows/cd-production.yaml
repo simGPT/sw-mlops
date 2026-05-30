@@ -24,7 +24,7 @@ jobs:
         run: kubectl apply -k k8s/model-api/overlays/production/
 
       - name: 파드 재시작 # (이미지 태그가 계속 latest여도 새 이미지로 배포되도록)
-        run: kubectl rollout restart deployment/model-api
+        run: kubectl rollout restart deployment/model-api -n model-api # 네임스페이스 지정
 
       - name: 배포 확인
-        run: kubectl rollout status deployment/model-api
+        run: kubectl rollout status deployment/model-api -n model-api # 네임스페이스 지정
