@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mlflow
+  namespace: mlflow
+  annotations:
+    cert-manager.io/cluster-issuer: swmlops-issuer # cert-manager에서 인증서를 발급받을 때 사용할 ClusterIssuer 지정
+spec:
+  ingressClassName: traefik # k3s 에서 기본 제공해주는 ingress controller
+  tls:
+    - hosts:
+        - mlflow.swmlops.site # 이 도메인으로 접속할 때 TLS 인증서 사용
+      secretName: mlflow-tls
+  rules:
+    - host: mlflow.swmlops.site # 이 도메인으로 접속할 때 아래의 http 경로로 라우팅
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mlflow # mlflow 서비스로 이동 + 5000 포트로 이동
+                port:
+                  number: 5000
