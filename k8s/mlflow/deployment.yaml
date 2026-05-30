@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mlflow
+  namespace: mlflow
 spec:
   replicas: 1
   selector:
@@ -39,5 +40,5 @@ spec:
             - --port=5000
             - --default-artifact-root=s3://kube-ml-bucket/mlflow-artifacts # 모델 저장
             - --backend-store-uri=postgresql://mlflow:1234@mlflow-db:5432/mlflow
-            - --allowed-hosts=mlflow,mlflow:5000,mlflow.default.svc.cluster.local,localhost,localhost:5000 # 실제 운영 환경에서는 실제 도메인을 입력하면 될 듯
+            - --allowed-hosts=mlflow.mlflow.svc.cluster.local,localhost,localhost:5000,mlflow.swmlops.site # 풀 DNS, localhost, 도메인 허용
 

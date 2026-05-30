@@ -11,7 +11,7 @@ def load_model(model_name: str, version: str):
     if cache_key in _model_cache:
         return _model_cache[cache_key]
 
-    mlflow_uri = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+    mlflow_uri = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000") # 환경변수에서 mlflow tracking uri 가져오기, 없으면 기본값으로 http://mlflow:5000 사용
     mlflow.set_tracking_uri(mlflow_uri)
 
     model_uri = f"models:/{model_name}-{version}/latest"
