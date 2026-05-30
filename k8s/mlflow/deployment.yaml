@@ -16,6 +16,7 @@ spec:
       containers:
         - name: mlflow
           image: burakince/mlflow:3.7.0 # postgreSQL 연결이 되는 버전 이미지
+          image: burakince/mlflow:3.7.0 # postgreSQL 연결이 되는 버전 이미지
           ports:
             - containerPort: 5000
           env:
