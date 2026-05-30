@@ -4,4 +4,17 @@ prometheus:
       - job_name: model-api
         static_configs:
           - targets:
-              - model-api.default.svc.cluster.local:8000
+              - model-api.model-api.svc.cluster.local:8000 # 다른 네임스페이스에 있는 model-api의 클러스터 내부 주소와 포트
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: swmlops-issuer
+    hosts:
+      - monitoring.swmlops.site
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - monitoring.swmlops.site

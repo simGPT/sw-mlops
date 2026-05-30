@@ -8,10 +8,10 @@ conda 환경 활성화:
 conda activate mlops
 
 # v1 초기 학습
-python3 training/train.py --version v1
+python3 training/mnist/train.py --version v1
 
 # v2 재학습 (train + retrain 데이터 합쳐서 학습)
-python3 training/train.py --version v2
+python3 training/mnist/train.py --version v2
 """
 import argparse
 import os
@@ -23,12 +23,12 @@ import torch
 import mlflow
 import mlflow.pytorch
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from app.models.mnist_model import get_model
-from training.dataset import load_data, split_data
-from training.trainer import train
-from training.evaluate import evaluate
+from training.mnist.dataset import load_data, split_data
+from training.mnist.trainer import train
+from training.mnist.evaluate import evaluate
 
 
 def main(args):
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', type=str, default='v1', choices=['v1', 'v2'])
     parser.add_argument('--data_dir', type=str, default='../data')
-    parser.add_argument('--mlflow_uri', type=str, default='http://localhost:30050')
+    parser.add_argument('--mlflow_uri', type=str, default='http://localhost:5000')
     args = parser.parse_args()
 
     main(args)
