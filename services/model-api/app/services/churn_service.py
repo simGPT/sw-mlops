@@ -6,7 +6,6 @@ from app.models.loader import load_churn_model
 from prometheus_client import Counter, Histogram
 
 MODEL_NAME = "churn"
-MODEL_VERSION = os.getenv("CHURN_MODEL_VERSION", "v5")
 
 FEATURES = [
     'account_age_months',
@@ -36,7 +35,7 @@ def predict(data: dict) -> dict:
     if missing:
         raise ValueError(f"누락된 피처: {missing}")
 
-    model = load_churn_model(MODEL_NAME, MODEL_VERSION)
+    model = load_churn_model(MODEL_NAME)
 
     x = [[data[f] for f in FEATURES]]
 
@@ -58,7 +57,6 @@ def predict(data: dict) -> dict:
         },
         "metadata": {
             "model": MODEL_NAME,
-            "version": MODEL_VERSION,
             "inference_time_ms": time_ms,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
