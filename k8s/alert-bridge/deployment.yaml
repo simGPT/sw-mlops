@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-bridge
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-bridge
+  template:
+    metadata:
+      labels:
+        app: alert-bridge
+    spec:
+      containers:
+        - name: alert-bridge
+          image: simgpt/alert-bridge:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-credentials
+                  key: token
+            - name: GITHUB_REPO_OWNER
+              value: simGPT
+            - name: GITHUB_REPO_NAME
+              value: sw-mlops
