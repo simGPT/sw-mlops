@@ -1,0 +1,45 @@
+name: Retrain (churn)
+
+on:
+  repository_dispatch:
+    types:
+      - model-retrain
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 의존성 설치
+        run: |
+          pip install -r services/model-api/requirements.txt
+
+      - name: 트리거된 알림 출력
+        run: |
+          echo "Triggered by alerts: ${{ toJson(github.event.client_payload.alerts) }}"
+
+      - name: 모델 재학습 & MLflow 등록
+        working-directory: services/model-api
+        env:
+          MLFLOW_TRACKING_URI: https://mlflow.swmlops.site
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+        run: |
+          python training/churn/train.py \
+            --mlflow_uri https://mlflow.swmlops.site \
+            --data_dir ../data/churn
+
+      - name: model-api 파드 재시작
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_PRODUCTION }}" | base64 -d > $HOME/.kube/config
+          kubectl rollout restart deployment/model-api -n model-api
+          kubectl rollout status deployment/model-api -n model-api
