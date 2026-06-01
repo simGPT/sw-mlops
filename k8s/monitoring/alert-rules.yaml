@@ -1,0 +1,60 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: churn-model-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: churn-model
+      rules:
+        - alert: ChurnPredictionRatioHigh # 이탈 비율 10분동안 70% 초과
+          expr: |
+            sum(rate(churn_predictions_total{predicted="1"}[10m]))
+            /
+            sum(rate(churn_predictions_total[10m])) > 0.7
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "이탈 예측 비율 이상"
+            description: "이탈 예측 비율이 10분 이상 70%를 초과했습니다."
+
+        - alert: ChurnConfidenceLow # 예측 신뢰도 저하 10분동안 평균 confidence가 0.6 미만
+          expr: |
+            rate(churn_confidence_score_sum[10m])
+            /
+            rate(churn_confidence_score_count[10m]) < 0.6
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "모델 신뢰도 저하"
+            description: "평균 confidence가 10분 이상 0.6 미만입니다."
+
+        - alert: ChurnInferenceLatencyHigh # 추론 지연 시간 5분동안 p99 지연 시간이 0.1초 초과
+          expr: |
+            histogram_quantile(0.99, rate(churn_inference_duration_seconds_bucket[5m])) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "추론 지연 시간 이상"
+            description: "추론 p99 지연 시간이 5분 이상 0.1초를 초과했습니다."
+
+        - alert: ChurnFeatureDrift # 피처 평균이 24시간 전 대비 50% 이상 변화
+          expr: |
+            abs(
+              avg_over_time(churn_feature_mean[1h])
+              -
+              avg_over_time(churn_feature_mean[1h] offset 24h)
+            )
+            /
+            avg_over_time(churn_feature_mean[1h] offset 24h) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "입력 피처 분포 이상"
+            description: "피처 평균이 24시간 전 대비 50% 이상 변화했습니다."
