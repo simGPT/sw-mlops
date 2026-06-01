@@ -1,5 +1,6 @@
 # 데이터
 data/
+!services/data/churn/
 
 # 모델 가중치 (v1은 예외적으로 커밋할 경우 별도 처리)
 services/model-api/artifacts/*.pth
