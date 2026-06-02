@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-bridge
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  selector:
+    app: alert-bridge
+  ports:
+    - port: 8080
+      targetPort: 8080

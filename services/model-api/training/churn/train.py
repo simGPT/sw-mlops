@@ -49,7 +49,7 @@ def main(args):
         mlflow.sklearn.log_model(
             model,
             artifact_path="model",
-            registered_model_name=f"churn-{args.version}",
+            registered_model_name="churn",
         )
 
         print(f"valid_f1    : {val_metrics['f1']:.4f}")

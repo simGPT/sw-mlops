@@ -7,8 +7,7 @@ from prometheus_client import Counter, Histogram # prometheus 로 모니터링
 
 
 MODEL_NAME = "mnist"
-MODEL_VERSION = "v1"
- 
+
 prediction_counter = Counter(
     "mnist_predictions_total",
     "예측 횟수",
@@ -26,7 +25,7 @@ def predict(data: dict) -> dict:
     if pixels is None or len(pixels) != 784:
         raise ValueError(f"pixels 필드에 784개의 값이 필요합니다. 길이 오류: {len(pixels)}")
 
-    model = load_model(MODEL_NAME, MODEL_VERSION)
+    model = load_model(MODEL_NAME)
 
     start = time.time()
     with torch.no_grad():
@@ -48,7 +47,6 @@ def predict(data: dict) -> dict:
         },
         "metadata": {
             "model": MODEL_NAME,
-            "version": MODEL_VERSION,
             "inference_time_ms": time_ms,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
