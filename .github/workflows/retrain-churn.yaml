@@ -30,8 +30,6 @@ jobs:
         working-directory: services/model-api
         env:
           MLFLOW_TRACKING_URI: https://mlflow.swmlops.site
-          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
           python training/churn/train.py \
             --mlflow_uri https://mlflow.swmlops.site \
