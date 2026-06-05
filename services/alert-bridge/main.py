@@ -33,8 +33,8 @@ def send_email(subject: str, body: str):
     msg["From"] = ALERT_MAIL_FROM
     msg["To"] = ALERT_MAIL_TO
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as server:
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        server.starttls(context=ssl.create_default_context())
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.sendmail(ALERT_MAIL_FROM, ALERT_MAIL_TO, msg.as_string())
 
