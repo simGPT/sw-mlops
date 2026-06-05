@@ -70,7 +70,7 @@ def main(args):
                 "Authorization": f"Bearer {github_token}",
                 "Accept": "application/vnd.github+json",
             },
-            json={"event_type": "model-deploy"},
+            json={"event_type": "model-deploy"}, # deploy-churn 이벤트 트리거
         )
         if response.status_code == 204:
             print("배포 트리거 완료")
