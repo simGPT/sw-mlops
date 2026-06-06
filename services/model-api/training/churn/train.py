@@ -7,6 +7,7 @@ python3 training/churn/train.py --version v1
 import argparse
 import os
 import sys
+import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -57,6 +58,24 @@ def main(args):
         print(f"test_f1     : {test_metrics['f1']:.4f}")
         print(f"test_roc_auc: {test_metrics['roc_auc']:.4f}")
         print(f'MLflow에 모델 등록 완료: churn-{args.version}')
+
+    github_token = os.getenv("GITHUB_TOKEN")
+    github_owner = os.getenv("GITHUB_REPO_OWNER")
+    github_repo = os.getenv("GITHUB_REPO_NAME")
+
+    if github_token and github_owner and github_repo:
+        response = requests.post(
+            f"https://api.github.com/repos/{github_owner}/{github_repo}/dispatches",
+            headers={
+                "Authorization": f"Bearer {github_token}",
+                "Accept": "application/vnd.github+json",
+            },
+            json={"event_type": "deploy-churn"},
+        )
+        if response.status_code == 204:
+            print("배포 트리거 완료")
+        else:
+            print(f"배포 트리거 실패: {response.status_code}")
 
 
 if __name__ == '__main__':

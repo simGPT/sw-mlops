@@ -19,12 +19,33 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: GITHUB_TOKEN
+            - name: SMTP_HOST
               valueFrom:
                 secretKeyRef:
-                  name: github-credentials
-                  key: token
-            - name: GITHUB_REPO_OWNER
-              value: simGPT
-            - name: GITHUB_REPO_NAME
-              value: sw-mlops
+                  name: smtp-credentials
+                  key: host
+            - name: SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: port
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: user
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: password
+            - name: ALERT_MAIL_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: mail-from
+            - name: ALERT_MAIL_TO
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: mail-to
