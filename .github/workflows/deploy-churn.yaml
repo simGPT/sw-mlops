@@ -3,7 +3,7 @@ name: Deploy (churn)
 on:
   repository_dispatch:
     types:
-      - model-deploy
+      - deploy-churn
 
 jobs:
   deploy:
