@@ -7,6 +7,7 @@ on:
     paths:
       - 'services/model-api/**'
       - 'services/alert-bridge/**'
+      - 'k8s/**'
 
 jobs:
   deploy:
@@ -29,6 +30,9 @@ jobs:
 
       - name: model-api 배포 확인
         run: kubectl rollout status deployment/model-api -n model-api
+
+      - name: alert-bridge kubectl apply
+        run: kubectl apply -f k8s/alert-bridge/deployment.yaml
 
       - name: alert-bridge 파드 재시작
         run: kubectl rollout restart deployment/alert-bridge -n monitoring
