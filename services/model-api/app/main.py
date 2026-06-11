@@ -61,3 +61,27 @@ def churn_predict(request: RequestSchema):
             metadata=None,
             error=str(e),
         )
+
+
+# Uplift 예측 API
+@app.post("/uplift_predict", response_model=ResponseSchema)
+def uplift_predict(request: RequestSchema):
+    try:
+        service = get_service("uplift")
+        output = service.predict(request.data)
+
+        return ResponseSchema(
+            success=True,
+            model="uplift",
+            result=output["result"],
+            metadata=output["metadata"],
+            error=None,
+        )
+    except Exception as e:
+        return ResponseSchema(
+            success=False,
+            model="uplift",
+            result=None,
+            metadata=None,
+            error=str(e),
+        )
