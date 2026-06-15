@@ -17,12 +17,15 @@ import requests
 from sklearn.model_selection import train_test_split
 
 from app.models.uplift_model import TLearner
-from training.uplift.dataset import generate_dummy_data, FEATURES
+from training.uplift.dataset import generate_dummy_data, load_real_data, FEATURES
 from training.uplift.evaluate import evaluate
 
 
 def main(args):
-    df = generate_dummy_data(n_samples=5000) # 일단 더미데이터로 학습, 실제로는 고객 데이터를 불러와서 사용
+    if args.data_path:
+        df = load_real_data(args.data_path)
+    else:
+        df = generate_dummy_data(n_samples=5000)
 
     X = df[FEATURES].values
     y = df['outcome'].values
@@ -91,6 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('--version', type=str, default='v1')
     parser.add_argument('--C', type=float, default=1.0)
     parser.add_argument('--mlflow_uri', type=str, default='https://mlflow.swmlops.site')
+    parser.add_argument('--data_path', type=str, default=None)
     args = parser.parse_args()
 
     main(args)
