@@ -95,8 +95,12 @@ def main(args):
         )
         mlflow.log_param("deploy_triggered", passed)
 
+    if prev_avg_uplift is not None:
+        print(f"이전 모델 avg_uplift_score : {prev_avg_uplift:.4f}")
+        print(f"신규 모델 avg_uplift_score : {metrics['avg_uplift_score']:.4f}")
+        print(f"성능 비교 결과             : {'향상 → 배포 진행' if passed else '미달 → 배포 스킵'}")
+
     if not passed:
-        print(f"[배포 스킵] 이전 모델보다 성능 낮음 — 신규: {metrics['avg_uplift_score']:.4f} / 이전: {prev_avg_uplift:.4f}")
         return
 
     # 배포 트리거
