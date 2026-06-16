@@ -12,6 +12,15 @@ FEATURES = [
     'cart_abandonment_rate',
 ]
 
+def load_real_data(csv_path: str):
+    df = pd.read_csv(csv_path)
+    required = FEATURES + ['treatment', 'outcome']
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise ValueError(f"CSV에 누락된 컬럼: {missing}")
+    return df[required]
+
+
 # 더미 데이터 생성 함수
 def generate_dummy_data(n_samples=5000, random_state=42):
     np.random.seed(random_state)

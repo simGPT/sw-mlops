@@ -17,12 +17,27 @@ import requests
 from sklearn.model_selection import train_test_split
 
 from app.models.uplift_model import TLearner
-from training.uplift.dataset import generate_dummy_data, FEATURES
+from training.uplift.dataset import generate_dummy_data, load_real_data, FEATURES
 from training.uplift.evaluate import evaluate
 
 
+def get_prev_avg_uplift(client, model_name: str) -> float:
+    try:
+        versions = client.search_model_versions(f"name='{model_name}'")
+        if not versions:
+            return None
+        latest = sorted(versions, key=lambda v: int(v.version))[-1]
+        run = client.get_run(latest.run_id)
+        return run.data.metrics.get("avg_uplift_score")
+    except Exception:
+        return None
+
+
 def main(args):
-    df = generate_dummy_data(n_samples=5000) # 일단 더미데이터로 학습, 실제로는 고객 데이터를 불러와서 사용
+    if args.data_path:
+        df = load_real_data(args.data_path)
+    else:
+        df = generate_dummy_data(n_samples=5000)
 
     X = df[FEATURES].values
     y = df['outcome'].values
@@ -34,6 +49,13 @@ def main(args):
 
     mlflow.set_tracking_uri(args.mlflow_uri)
     mlflow.set_experiment("uplift")
+
+    client = mlflow.tracking.MlflowClient()
+    prev_avg_uplift = get_prev_avg_uplift(client, "uplift")
+    if prev_avg_uplift is not None:
+        print(f"현재 운영 모델 avg_uplift_score: {prev_avg_uplift:.4f}")
+    else:
+        print("등록된 이전 모델 없음 — 조건 없이 배포합니다.")
 
     with mlflow.start_run(run_name=args.version):
         model = TLearner(C=args.C)
@@ -66,6 +88,21 @@ def main(args):
         print(f"avg_uplift_score       : {metrics['avg_uplift_score']:.4f}")
         print(f"MLflow에 모델 등록 완료: uplift-{args.version}")
 
+        # 이전 모델 대비 성능 비교
+        passed = (
+            prev_avg_uplift is None
+            or metrics["avg_uplift_score"] >= prev_avg_uplift
+        )
+        mlflow.log_param("deploy_triggered", passed)
+
+    if prev_avg_uplift is not None:
+        print(f"이전 모델 avg_uplift_score : {prev_avg_uplift:.4f}")
+        print(f"신규 모델 avg_uplift_score : {metrics['avg_uplift_score']:.4f}")
+        print(f"성능 비교 결과             : {'향상 → 배포 진행' if passed else '미달 → 배포 스킵'}")
+
+    if not passed:
+        return
+
     # 배포 트리거
     github_token = os.getenv("GITHUB_TOKEN")
     github_owner = os.getenv("GITHUB_REPO_OWNER")
@@ -91,6 +128,7 @@ if __name__ == '__main__':
     parser.add_argument('--version', type=str, default='v1')
     parser.add_argument('--C', type=float, default=1.0)
     parser.add_argument('--mlflow_uri', type=str, default='https://mlflow.swmlops.site')
+    parser.add_argument('--data_path', type=str, default=None)
     args = parser.parse_args()
 
     main(args)
