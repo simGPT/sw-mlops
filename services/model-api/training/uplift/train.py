@@ -21,6 +21,18 @@ from training.uplift.dataset import generate_dummy_data, load_real_data, FEATURE
 from training.uplift.evaluate import evaluate
 
 
+def get_prev_avg_uplift(client, model_name: str) -> float:
+    try:
+        versions = client.search_model_versions(f"name='{model_name}'")
+        if not versions:
+            return None
+        latest = sorted(versions, key=lambda v: int(v.version))[-1]
+        run = client.get_run(latest.run_id)
+        return run.data.metrics.get("avg_uplift_score")
+    except Exception:
+        return None
+
+
 def main(args):
     if args.data_path:
         df = load_real_data(args.data_path)
@@ -37,6 +49,13 @@ def main(args):
 
     mlflow.set_tracking_uri(args.mlflow_uri)
     mlflow.set_experiment("uplift")
+
+    client = mlflow.tracking.MlflowClient()
+    prev_avg_uplift = get_prev_avg_uplift(client, "uplift")
+    if prev_avg_uplift is not None:
+        print(f"현재 운영 모델 avg_uplift_score: {prev_avg_uplift:.4f}")
+    else:
+        print("등록된 이전 모델 없음 — 조건 없이 배포합니다.")
 
     with mlflow.start_run(run_name=args.version):
         model = TLearner(C=args.C)
@@ -68,6 +87,17 @@ def main(args):
         print(f"control_outcome_rate   : {metrics['control_outcome_rate']:.4f}")
         print(f"avg_uplift_score       : {metrics['avg_uplift_score']:.4f}")
         print(f"MLflow에 모델 등록 완료: uplift-{args.version}")
+
+        # 이전 모델 대비 성능 비교
+        passed = (
+            prev_avg_uplift is None
+            or metrics["avg_uplift_score"] >= prev_avg_uplift
+        )
+        mlflow.log_param("deploy_triggered", passed)
+
+    if not passed:
+        print(f"[배포 스킵] 이전 모델보다 성능 낮음 — 신규: {metrics['avg_uplift_score']:.4f} / 이전: {prev_avg_uplift:.4f}")
+        return
 
     # 배포 트리거
     github_token = os.getenv("GITHUB_TOKEN")
